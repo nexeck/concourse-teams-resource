@@ -60,7 +60,7 @@ EOF
 
 compact_body="$(echo "${body}" | jq -c '.')"
 
-curl -s -X POST --data-urlencode "payload=${compact_body}" ${CURL_OPTION} "${webhook_url}"
+curl -s -X POST --data-urlencode "payload=${compact_body}" "${webhook_url}"
 
 #
 # print the output

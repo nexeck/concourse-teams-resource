@@ -1,0 +1,69 @@
+#!/usr/bin/env ash
+
+set -eu
+
+exec 3>&1 # make stdout available as fd 3 for the result
+exec 1>&2 # redirect all output to stderr for logging
+
+dir_put=$1
+
+# for jq
+PATH=/usr/local/bin:$PATH
+
+payload=$(mktemp /tmp/resource-in.XXXXXX)
+
+cat > "${payload}" <&0
+
+webhook_url="$(jq -r '.source.url' < "${payload}")"
+build_status=$(jq -r '(.params.status // null)' < $payload)
+
+
+case "$build_status" in
+  success)
+    message_color='#00FF00'
+    ;;
+  failure)
+    message_color='#FF0000'
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+message_title_link='${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}'
+
+
+message_text=
+
+body="$(cat <<EOF
+{
+	"@type": "MessageCard",
+	"@context": "https://schema.org/extensions",
+	"summary": "Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}",
+	"themeColor": "${message_color}",
+	"title": "${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}",
+	"potentialAction": [
+		{
+			"@type": "OpenUri",
+			"name": "View in Concourse",
+			"targets": [
+				{
+					"os": "default",
+					"uri": "${message_title_link}"
+				}
+			]
+		}
+	]
+}
+EOF
+)"
+
+compact_body="$(echo "${body}" | jq -c '.')"
+
+curl -s -X POST --data-urlencode "payload=${compact_body}" ${CURL_OPTION} "${webhook_url}"
+
+#
+# print the output
+#
+timestamp="$(jq -n "{version:{time:\"$(date --utc +%FT%T.%3NZ)\"}}")"
+echo "$timestamp" | jq -s add >&3

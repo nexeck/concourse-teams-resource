@@ -20,10 +20,10 @@ build_status=$(jq -r '(.params.status // null)' < $payload)
 
 case "$build_status" in
   success)
-    message_color='#00FF00'
+    message_color='00FF00'
     ;;
   failure)
-    message_color='#FF0000'
+    message_color='FF0000'
     ;;
   *)
     exit 1

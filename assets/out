@@ -16,38 +16,22 @@ cat > "${payload}" <&0
 
 webhook_url="$(jq -r '.source.url' < "${payload}")"
 build_status=$(jq -r '(.params.status // null)' < $payload)
-git_repo="$(jq -r '(.params.git_repo // null)' < "${payload}")"
 
 case "$build_status" in
   success)
     message_color='00FF00'
+    message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
+    message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} succeeded"
     ;;
   failure)
     message_color='FF0000'
+    message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
+    message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} failed"
     ;;
   *)
     exit 1
     ;;
 esac
-
-if [[ "$git_repo" != 'null' ]]; then
-  dir_git="$dir_put/$git_repo"
-
-  git_commit=$(git -C $dir_git rev-parse HEAD | jq -R -s .)
-  git_branch=$(git -C $dir_git log -1 --format="format:%D" | jq -R -s .)
-
-  git_author=$(git -C $dir_git log -1 --format=format:%an | jq -R -s .)
-  git_author_date=$(git -C $dir_git log -1 --format=format:%ai | jq -R -s .)
-
-  git_committer=$(git -C $dir_git log -1 --format=format:%cn | jq -R -s .)
-  git_committer_date=$(git -C $dir_git log -1 --format=format:%ci | jq -R -s .)
-
-  git_message=$(git -C $dir_git log -1 --format=format:%B | jq -R -s .)
-
-  git_gpg_status=$(git -C $dir_git log -1 --format="format:%G?" | jq -R -s .)
-  git_gpg_signer=$(git -C $dir_git log -1 --format="format:%GS" | jq -R -s .)
-  git_gpg_key=$(git -C $dir_git log -1 --format="format:%GK" | jq -R -s .)
-fi
 
 message_title_link='${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}'
 
@@ -56,12 +40,25 @@ body="$(cat <<EOF
 {
 	"@type": "MessageCard",
 	"@context": "https://schema.org/extensions",
-	"summary": "Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}",
+	"summary": "${message_summary}",
 	"themeColor": "${message_color}",
-	"title": "${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}",
+	"title": "${message_title}",
 	"sections": [
 		{
-			"activityTitle": "Build failed"
+			"activityTitle": "Miguel Garcie",
+			"activitySubtitle": "9/13/2016, 11:46am",
+			"activityImage": "https://connectorsdemo.azurewebsites.net/images/MSC12_Oscar_002.jpg",
+			"facts": [
+				{
+					"name": "Repository:",
+					"value": "mgarcia\\test"
+				},
+				{
+					"name": "Issue #:",
+					"value": "176715375"
+				}
+			],
+			"text": "There is a problem with Push notifications, they don't seem to be picked up by the connector."
 		}
 	],
 	"potentialAction": [

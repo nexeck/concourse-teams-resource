@@ -35,7 +35,7 @@ case "$build_status" in
     ;;
 esac
 
-message_title_link='${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}'
+message_title_link="${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
 
 set -o xtrace
 
@@ -46,24 +46,6 @@ body="$(cat <<EOF
 	"summary": "${message_summary}",
 	"themeColor": "${message_color}",
 	"title": "${message_title}",
-	"sections": [
-		{
-			"activityTitle": "Miguel Garcie",
-			"activitySubtitle": "9/13/2016, 11:46am",
-			"activityImage": "${icon}",
-			"facts": [
-				{
-					"name": "Repository:",
-					"value": "mgarcia\\test"
-				},
-				{
-					"name": "Issue #:",
-					"value": "176715375"
-				}
-			],
-			"text": "There is a problem with Push notifications, they don't seem to be picked up by the connector."
-		}
-	],
 	"potentialAction": [
 		{
 			"@type": "OpenUri",

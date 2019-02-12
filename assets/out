@@ -22,11 +22,13 @@ case "$build_status" in
     message_color='00FF00'
     message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
     message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} succeeded"
+    icon="https://cdnjs.cloudflare.com/ajax/libs/octicons/8.3.0/svg/check.svg"
     ;;
   failure)
     message_color='FF0000'
     message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
     message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} failed"
+    icon="https://cdnjs.cloudflare.com/ajax/libs/octicons/8.3.0/svg/x.svg"
     ;;
   *)
     exit 1
@@ -35,6 +37,7 @@ esac
 
 message_title_link='${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}'
 
+set -o xtrace
 
 body="$(cat <<EOF
 {
@@ -47,7 +50,7 @@ body="$(cat <<EOF
 		{
 			"activityTitle": "Miguel Garcie",
 			"activitySubtitle": "9/13/2016, 11:46am",
-			"activityImage": "https://connectorsdemo.azurewebsites.net/images/MSC12_Oscar_002.jpg",
+			"activityImage": "${icon}",
 			"facts": [
 				{
 					"name": "Repository:",

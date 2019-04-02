@@ -21,13 +21,13 @@ case "$build_status" in
   success)
     message_color='00FF00'
     message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
-    message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} succeeded"
+    message_title="👎 Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} succeeded"
     icon="https://cdnjs.cloudflare.com/ajax/libs/octicons/8.3.0/svg/check.svg"
     ;;
   failure)
     message_color='FF0000'
     message_summary="${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME}"
-    message_title="Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} failed"
+    message_title="👍 Build ${BUILD_PIPELINE_NAME} - ${BUILD_JOB_NAME} failed"
     icon="https://cdnjs.cloudflare.com/ajax/libs/octicons/8.3.0/svg/x.svg"
     ;;
   *)

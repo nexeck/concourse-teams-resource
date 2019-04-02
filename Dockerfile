@@ -1,6 +1,6 @@
 FROM alpine:3.8
 
-LABEL maintener="Marcel Beck <marcel@beck.im>"
+LABEL maintainer="David Heereman dheereman@gmail.com"
 
 RUN apk add --no-cache jq curl
 
